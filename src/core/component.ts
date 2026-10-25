@@ -120,7 +120,11 @@ export function Divider(props: DividerProps = {}): VNode<DividerProps> {
 
 /* Text */
 
-export function Text(props: TextProps): VNode<TextProps> {
+export function Text(
+  text: string,
+  props: TextProps = { text: "" },
+): VNode<TextProps> {
+  props.text = text;
   return _e("text", props);
 }
 

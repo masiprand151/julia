@@ -11,7 +11,7 @@ function Main() {
     children: [
       View({
         children: [
-          Text({ text: `Halo dari ${message}` }),
+          Text(`Halo dari ${message}`),
           Button({
             text: "click me",
             onClick: () => {
