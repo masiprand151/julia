@@ -12,6 +12,7 @@ import { state } from "./state";
 import { isVNode, propsOf, normalizeChildren } from "./vnode-utils";
 import { createLayout, attachWidget } from "./layout";
 import { attachEvents } from "./events";
+import { compileStyleSheet } from "../style";
 
 export function createWidget(
   node: VNodeChild,
@@ -75,6 +76,14 @@ export function createWidget(
     container.setLayout(layout);
   }
 
+  if (props.width != null || props.height != null) {
+    const width = Number(props.width ?? widget.width());
+    const height = Number(props.height ?? widget.height());
+
+    widget.setFixedSize(width, height);
+  }
+
+  applyWidgetStyle(widget, props, type);
   attachWidget(widget, node, parentLayout, index);
   attachEvents(widget, node);
 
@@ -98,4 +107,28 @@ export function createWidget(
   }
 
   return mounted;
+}
+
+function applyWidgetStyle(widget: QWidget, props: any, type: string): void {
+  if (!props.style) return;
+
+  const selector =
+    type === "button"
+      ? "QPushButton#juliaButton"
+      : type === "text"
+        ? "QLabel#juliaText"
+        : "QWidget#juliaView";
+
+  const objectName =
+    type === "button"
+      ? "juliaButton"
+      : type === "text"
+        ? "juliaText"
+        : "juliaView";
+
+  widget.setObjectName(objectName);
+  const target =
+    type === "button" ? "QPushButton" : type === "text" ? "QLabel" : "QWidget";
+
+  widget.setStyleSheet(compileStyleSheet(props.style, selector, target));
 }

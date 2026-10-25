@@ -1,14 +1,31 @@
-import { Application, Button, Text, useState, View, Window } from "@Julia/core";
+import {
+  Application,
+  Button,
+  Text,
+  useState,
+  View,
+  Window,
+  StyleSheet,
+} from "@Julia/core";
+
+const styles = StyleSheet.create({
+  container: {
+    backgroundColor: "#444",
+  },
+});
 
 function Main() {
   const [message, setMessage] = useState("Julia");
 
   return Window({
     title: "Test",
-    width: 800,
-    height: 600,
+    width: 1024,
+    height: 764,
     children: [
       View({
+        // width: 1024,
+        // height: 764,
+        style: styles.container,
         children: [
           Text(`Halo dari ${message}`),
           Button({

@@ -1,4 +1,9 @@
-import { QApplication, QMainWindow, QWidget } from "@nodegui/nodegui";
+import {
+  FlexLayout,
+  QApplication,
+  QMainWindow,
+  QWidget,
+} from "@nodegui/nodegui";
 
 import type { VNode } from "./types";
 import { diff } from "./reconciler";
@@ -23,11 +28,25 @@ export class Application {
 
     const rootWidget = new QWidget();
     state.window.setCentralWidget(rootWidget);
+    rootWidget.setObjectName("RootApp");
+
+    rootWidget.setStyleSheet(`
+    QWidget#RootApp {
+      padding: 0px;
+      margin: 0px;
+      border: none;
+    }
+  `);
+
+    const rootLayout = new FlexLayout();
+    rootLayout.setContentsMargins(0, 0, 0, 0);
+    rootLayout.setSpacing(0);
+    rootWidget.setLayout(rootLayout);
 
     const root: MountedNode = {
       vnode: node,
       widget: rootWidget,
-      layout: null,
+      layout: rootLayout,
       parentWidget: rootWidget,
       parentLayout: null,
       children: [],
@@ -36,9 +55,11 @@ export class Application {
     const children = normalizeChildren(node.children);
 
     children.forEach((child, index) => {
-      const childMounted = createWidget(child, rootWidget, null, index);
+      const childMounted = createWidget(child, rootWidget, rootLayout, index);
 
-      if (childMounted) root.children.push(childMounted);
+      if (childMounted) {
+        root.children.push(childMounted);
+      }
     });
 
     state.rootWidget = rootWidget;
