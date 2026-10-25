@@ -5,6 +5,7 @@ import type { Style } from "./style";
  * ======================================================= */
 
 export type Key = string | number;
+export type classNameType = string;
 
 export type Ref<T = unknown> = {
   current: T | null;
@@ -35,6 +36,7 @@ export interface VNode<P = Record<string, unknown>> {
   readonly kind: VNodeKind;
   readonly key: Key | null;
   readonly ref: Ref<unknown>;
+  readonly className: classNameType;
   readonly props: Readonly<P & { children?: VNodeChildren }>;
   readonly children: readonly VNodeChild[];
 }

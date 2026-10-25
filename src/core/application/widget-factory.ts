@@ -55,12 +55,6 @@ export function createWidget(
     label.setMinimumWidth(0);
 
     label.setSizePolicy(QSizePolicyPolicy.Minimum, QSizePolicyPolicy.Fixed);
-    //   label.setStyleSheet(`
-    //   QLabel {
-    //     border: 2px solid transparent;
-    //     padding: 2px;
-    //   }
-    // `);
 
     widget = label;
   } else if (type === "button") {

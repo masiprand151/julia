@@ -1,5 +1,6 @@
 import { Application, useState } from "./core/Application";
 import { Button, Text, View, Window } from "./core/component";
+import { compileStyleSheet, parseStyle, StyleSheet } from "./core/style";
 
 function Main() {
   const [message, setMessage] = useState("Julia");

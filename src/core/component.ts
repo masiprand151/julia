@@ -44,12 +44,15 @@ import type {
   TabProps,
   DialogProps,
   TooltipProps,
+  classNameType,
 } from "./types";
 
 export const VNODE_TYPE = Symbol.for("julia.vnode");
 export const Fragment = Symbol.for("julia.fragment");
 
 type ElementInput = VNodeProps & Record<string, unknown>;
+
+let autoClassCounter = 0;
 
 export function createElement<P = Record<string, unknown>>(
   type: VNodeType,
@@ -60,7 +63,13 @@ export function createElement<P = Record<string, unknown>>(
     ...((props ?? {}) as object),
   } as ElementInput;
 
-  const { key: rawKey, ref: rawRef, children: propsChildren, ...rest } = input;
+  const {
+    key: rawKey,
+    ref: rawRef,
+    className: rawClass,
+    children: propsChildren,
+    ...rest
+  } = input;
 
   const normalizedChildren: VNodeChild[] =
     children.length > 0
@@ -71,12 +80,16 @@ export function createElement<P = Record<string, unknown>>(
           ? [...propsChildren]
           : [propsChildren as VNodeChild];
 
+  const autoClassName =
+    type === Fragment ? null : `${String(type)}_${++autoClassCounter}`;
+
   return {
     $$typeof: VNODE_TYPE,
     type,
     kind: type === Fragment ? "fragment" : "element",
     key: (rawKey as Key | null | undefined) ?? null,
     ref: (rawRef as Ref<unknown> | undefined) ?? null,
+    className: (rawClass as classNameType | "") ?? autoClassName,
     props: {
       ...rest,
       children: normalizedChildren,
