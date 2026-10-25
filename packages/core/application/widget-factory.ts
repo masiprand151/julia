@@ -17,7 +17,7 @@ import { isVNode, propsOf, normalizeChildren } from "./vnode-utils";
 import { attachWidget } from "./layout";
 import { attachEvents } from "./events";
 import { compileStyleSheet, StyleSheet } from "../style";
-import type { StyleInput } from "../style";
+import type { StyleInput, StyleTarget } from "../style";
 
 export function createWidget(
   node: VNodeChild,
@@ -136,6 +136,10 @@ export function createWidget(
     if (type === "column" || type === "row") {
       container.setInlineStyle("flex: 1;");
     }
+
+    if (type === "expanded") {
+      container.setInlineStyle("flex: 1;");
+    }
   }
 
   // Explicit numeric sizes only
@@ -197,26 +201,82 @@ function applyWidgetStyle(
     return;
   }
 
-  const selector =
-    type === "button"
-      ? "QPushButton#juliaButton"
-      : type === "text"
-        ? "QLabel#juliaText"
-        : "QWidget#juliaView";
+  const normalizedType = type.toLowerCase();
 
-  const objectName =
-    type === "button"
-      ? "juliaButton"
-      : type === "text"
-        ? "juliaText"
-        : "juliaView";
+  const widgetConfig: Record<
+    string,
+    { objectName: string; selector: string; target: StyleTarget }
+  > = {
+    button: {
+      objectName: "juliaButton",
+      selector: "QPushButton#juliaButton",
+      target: "QPushButton",
+    },
+    text: {
+      objectName: "juliaText",
+      selector: "QLabel#juliaText",
+      target: "QLabel",
+    },
+    scrollview: {
+      objectName: "juliaScrollView",
+      selector: "QScrollArea#juliaScrollView",
+      target: "QScrollArea",
+    },
+    spacer: {
+      objectName: "juliaSpacer",
+      selector: "QWidget#juliaSpacer",
+      target: "QWidget",
+    },
+    expanded: {
+      objectName: "juliaExpanded",
+      selector: "QWidget#juliaExpanded",
+      target: "QWidget",
+    },
+    row: {
+      objectName: "juliaRow",
+      selector: "QWidget#juliaRow",
+      target: "QWidget",
+    },
+    column: {
+      objectName: "juliaColumn",
+      selector: "QWidget#juliaColumn",
+      target: "QWidget",
+    },
+    view: {
+      objectName: "juliaView",
+      selector: "QWidget#juliaView",
+      target: "QWidget",
+    },
+    container: {
+      objectName: "juliaContainer",
+      selector: "QWidget#juliaContainer",
+      target: "QWidget",
+    },
+    safeareaview: {
+      objectName: "juliaSafeAreaView",
+      selector: "QWidget#juliaSafeAreaView",
+      target: "QWidget",
+    },
+    center: {
+      objectName: "juliaCenter",
+      selector: "QWidget#juliaCenter",
+      target: "QWidget",
+    },
+  };
 
-  const target =
-    type === "button" ? "QPushButton" : type === "text" ? "QLabel" : "QWidget";
+  const config = widgetConfig[normalizedType] ?? {
+    objectName: `julia${normalizedType}`,
+    selector: `QWidget#julia${normalizedType}`,
+    target: "QWidget",
+  };
 
-  widget.setObjectName(objectName);
+  widget.setObjectName(config.objectName);
   widget.setStyleSheet(
-    compileStyleSheet(props.style as StyleInput, selector, target),
+    compileStyleSheet(
+      props.style as StyleInput,
+      config.selector,
+      config.target,
+    ),
   );
 }
 
@@ -235,7 +295,7 @@ function createScrollView(parentWidget: QWidget): {
 
   const content = new QWidget();
   content.setMinimumSize(0, 0);
-
+  content.setStyleSheet("QWidget { background: transparent;  }");
   const contentLayout = new QBoxLayout(Direction.TopToBottom);
 
   contentLayout.setContentsMargins(0, 0, 0, 0);
@@ -243,7 +303,7 @@ function createScrollView(parentWidget: QWidget): {
 
   content.setLayout(contentLayout);
   scrollArea.setWidget(content);
-
+  scrollArea.viewport().setStyleSheet("background: transparent;");
   return {
     widget: scrollArea,
     content,

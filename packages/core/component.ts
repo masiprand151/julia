@@ -6,7 +6,6 @@ import type {
   Key,
   Ref,
   ViewProps,
-  SafeAreaViewProps,
   ContainerProps,
   CenterProps,
   ExpandedProps,

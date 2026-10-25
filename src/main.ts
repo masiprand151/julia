@@ -20,14 +20,24 @@ function Main() {
         style: {
           flex: 1,
           flexDirection: "column",
-          backgroundColor: "#f3f4f6",
+          backgroundColor: "#ffffff",
           padding: 16,
         },
         children: [
-          Text("Dashboard"),
+          Text("Dashboard", {
+            style: {
+              fontSize: 40,
+              fontWeight: "bold",
+            },
+          }),
           Row({
             children: [
-              Text("Selamat datang", { fontSize: 25 }),
+              Text("Selamat datang", {
+                style: {
+                  fontSize: 20,
+                  fontWeight: "bold",
+                },
+              }),
               Spacer(),
               Button({ text: "Pengaturan" }),
             ],

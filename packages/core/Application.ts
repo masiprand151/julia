@@ -30,11 +30,16 @@ export class Application {
     state.window.setCentralWidget(rootWidget);
     rootWidget.setObjectName("RootApp");
 
+    // resset style
     rootWidget.setStyleSheet(`
     QWidget#RootApp {
       padding: 0px;
       margin: 0px;
       border: none;
+    }
+
+    QScrollArea {
+      background-color: transparent; /* Light blue background */
     }
   `);
 

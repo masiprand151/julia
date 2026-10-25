@@ -29,7 +29,7 @@ export type TextAlign = "left" | "center" | "right" | "justify";
 
 export type BorderStyle = "none" | "solid" | "dashed" | "dotted";
 
-export type StyleTarget = "QWidget" | "QPushButton" | "QLabel" | "QLineEdit";
+export type StyleTarget = "QWidget" | "QPushButton" | "QLabel" | "QScrollArea";
 
 export interface SpacingStyle {
   margin?: Dimension;
@@ -483,6 +483,8 @@ export function compileStyleSheet(
     return "";
   }
 
+  const unsupportedProperties = new Set(["yBorder"]);
+
   if (Array.isArray(style)) {
     return style
       .map((item) => compileStyleSheet(item, selector, target))
@@ -500,7 +502,11 @@ export function compileStyleSheet(
   }
 
   for (const [nestedSelector, nestedStyle] of Object.entries(definition)) {
-    if (!isNestedSelector(nestedSelector) || !isStyleObject(nestedStyle)) {
+    if (
+      !isNestedSelector(nestedSelector) ||
+      !isStyleObject(nestedStyle) ||
+      unsupportedProperties.has(nestedSelector)
+    ) {
       continue;
     }
 
