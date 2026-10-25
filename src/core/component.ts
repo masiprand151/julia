@@ -85,14 +85,6 @@ export function createElement<P = Record<string, unknown>>(
   };
 }
 
-export function h<P = Record<string, unknown>>(
-  type: VNodeType,
-  props: P | null,
-  ...children: VNodeChild[]
-): VNode<P> {
-  return createElement(type, props, ...children);
-}
-
 export function _e<P = Record<string, unknown>>(
   type: VNodeType,
   props: P | null,
