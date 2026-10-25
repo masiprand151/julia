@@ -1,39 +1,45 @@
 import {
   Application,
-  Button,
-  Text,
-  useState,
-  View,
   Window,
-  StyleSheet,
+  Column,
+  Row,
+  Expanded,
+  Spacer,
+  ScrollView,
+  Text,
+  Button,
 } from "@Julia/core";
 
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: "#444",
-  },
-});
-
 function Main() {
-  const [message, setMessage] = useState("Julia");
-
   return Window({
-    title: "Test",
+    title: "Julia Layout Demo",
     width: 1024,
-    height: 764,
-    children: [
-      View({
-        // width: 1024,
-        // height: 764,
-        style: styles.container,
+    height: 768,
+    body: [
+      Column({
+        style: {
+          flex: 1,
+          flexDirection: "column",
+          backgroundColor: "#f3f4f6",
+          padding: 16,
+        },
         children: [
-          Text(`Halo dari ${message}`),
-          Button({
-            text: "click me",
-            onClick: () => {
-              setMessage("fhkdhfkjhfkdhksjdkfjksjhfjhkhkhkjhkjhjoioihoyoiuyf");
-              console.log("ok");
-            },
+          Text("Dashboard"),
+          Row({
+            children: [
+              Text("Selamat datang", { fontSize: 25 }),
+              Spacer(),
+              Button({ text: "Pengaturan" }),
+            ],
+          }),
+          Expanded({
+            children: [
+              ScrollView({
+                children: Array.from({ length: 100 }, (_, index) =>
+                  Text(`Baris ${index + 1}`),
+                ),
+              }),
+            ],
           }),
         ],
       }),

@@ -1,15 +1,10 @@
 import type { Style } from "./style";
 
-/* =========================================================
- * VNODE CORE
- * ======================================================= */
+/* VNODE CORE */
 
 export type Key = string | number;
 export type classNameType = string;
-
-export type Ref<T = unknown> = {
-  current: T | null;
-} | null;
+export type Ref<T = unknown> = { current: T | null } | null;
 
 export type VNodeKind = "element" | "fragment" | "text";
 
@@ -49,14 +44,13 @@ export type ClassComponentType = new (
   props: Record<string, unknown>,
 ) => unknown;
 
-/* =========================================================
- * BASE PROPS
- * ======================================================= */
+/* BASE PROPS */
 
 export interface VNodeProps {
   key?: Key | null;
   ref?: Ref<unknown>;
   children?: VNodeChildren;
+  body?: VNodeChildren;
   id?: string;
   className?: string;
   style?: Style;
@@ -75,15 +69,19 @@ export interface ClickableProps extends VNodeProps {
 export interface LayoutProps extends ClickableProps {
   width?: number | string;
   height?: number | string;
+
   minWidth?: number;
   minHeight?: number;
   maxWidth?: number;
   maxHeight?: number;
+
   padding?: number | string;
   margin?: number | string;
   gap?: number;
   flex?: number;
+
   alignItems?: "start" | "center" | "end" | "stretch";
+
   justifyContent?:
     | "start"
     | "center"
@@ -92,11 +90,19 @@ export interface LayoutProps extends ClickableProps {
     | "space-around";
 }
 
-/* =========================================================
- * LAYOUT COMPONENTS
- * ======================================================= */
+/* LAYOUT COMPONENTS */
 
 export interface ViewProps extends LayoutProps {}
+
+export interface SafeAreaViewProps extends LayoutProps {}
+
+export interface ContainerProps extends LayoutProps {
+  centered?: boolean;
+}
+
+export interface CenterProps extends LayoutProps {}
+
+export interface ExpandedProps extends LayoutProps {}
 
 export interface ColumnProps extends LayoutProps {}
 
@@ -117,9 +123,7 @@ export interface DividerProps extends VNodeProps {
   color?: string;
 }
 
-/* =========================================================
- * TEXT COMPONENTS
- * ======================================================= */
+/* TEXT COMPONENTS */
 
 export interface TextProps extends ClickableProps {
   text?: string | number;
@@ -148,9 +152,7 @@ export interface LinkProps extends TextProps {
   target?: "_blank" | "_self";
 }
 
-/* =========================================================
- * BUTTON COMPONENTS
- * ======================================================= */
+/* BUTTON COMPONENTS */
 
 export interface ButtonProps extends ClickableProps {
   text?: string;
@@ -173,16 +175,16 @@ export interface ButtonGroupProps extends LayoutProps {
   orientation?: "horizontal" | "vertical";
 }
 
-/* =========================================================
- * INPUT COMPONENTS
- * ======================================================= */
+/* INPUT COMPONENTS */
 
 export interface InputProps extends ClickableProps {
   name?: string;
   value?: string | number;
   defaultValue?: string | number;
   placeholder?: string;
+
   type?: "text" | "password" | "email" | "number" | "search" | "tel" | "url";
+
   disabled?: boolean;
   readOnly?: boolean;
   required?: boolean;
@@ -192,6 +194,7 @@ export interface InputProps extends ClickableProps {
   min?: number;
   max?: number;
   step?: number;
+
   onChange?: (value: string) => void;
   onInput?: (value: string) => void;
   onSubmit?: () => void;
@@ -258,9 +261,7 @@ export interface DatePickerProps extends ClickableProps {
   onChange?: (value: string) => void;
 }
 
-/* =========================================================
- * FORM COMPONENTS
- * ======================================================= */
+/* FORM COMPONENTS */
 
 export interface FormProps extends VNodeProps {
   onSubmit?: () => void;
@@ -278,9 +279,7 @@ export interface FormGroupProps extends LayoutProps {
   direction?: "horizontal" | "vertical";
 }
 
-/* =========================================================
- * DATA COMPONENTS
- * ======================================================= */
+/* DATA COMPONENTS */
 
 export interface TableColumn {
   key: string;
@@ -322,9 +321,7 @@ export interface TreeViewProps extends LayoutProps {
   onSelect?: (key: string) => void;
 }
 
-/* =========================================================
- * MEDIA COMPONENTS
- * ======================================================= */
+/* MEDIA COMPONENTS */
 
 export interface ImageProps extends ClickableProps {
   src: string;
@@ -352,9 +349,7 @@ export interface SpinnerProps extends VNodeProps {
   label?: string;
 }
 
-/* =========================================================
- * WINDOW AND NAVIGATION
- * ======================================================= */
+/* WINDOW AND NAVIGATION */
 
 export interface WindowProps extends LayoutProps {
   title?: string;

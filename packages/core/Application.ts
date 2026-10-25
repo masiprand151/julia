@@ -5,7 +5,7 @@ import {
   QWidget,
 } from "@nodegui/nodegui";
 
-import type { VNode } from "./types";
+import type { VNode, VNodeChild } from "./types";
 import { diff } from "./reconciler";
 
 import { state } from "./application/state";
@@ -52,8 +52,11 @@ export class Application {
       children: [],
     };
 
-    const children = normalizeChildren(node.children);
+    const body = props.body as readonly VNodeChild[] | undefined;
 
+    const children = normalizeChildren(
+      node.children?.length ? node.children : (body ?? []),
+    );
     children.forEach((child, index) => {
       const childMounted = createWidget(child, rootWidget, rootLayout, index);
 
@@ -106,6 +109,7 @@ export class Application {
 
     this.mountRoot(initWindow);
     state.window.show();
+
     QApplication.instance().exec();
   }
 }

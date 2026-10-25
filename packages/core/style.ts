@@ -1,3 +1,5 @@
+import { QWidget } from "@nodegui/nodegui";
+
 export type Dimension = number | string;
 export type ColorValue = string;
 
@@ -518,6 +520,23 @@ export function compileStyleSheet(
   }
 
   return output.join("\n");
+}
+
+function applyGapToChild(
+  child: QWidget,
+  gap: number,
+  index: number,
+  total: number,
+): void {
+  if (total <= 1 || gap <= 0) return;
+
+  // Margin separuh gap di setiap sisi widget.
+  const halfGap = Math.floor(gap / 2);
+
+  child.setContentsMargins(0, 0, 0, 0);
+
+  // Ini bukan margin Yoga; gunakan hanya jika widget memang
+  // tidak dikendalikan FlexLayout.
 }
 
 // example

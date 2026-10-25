@@ -6,6 +6,10 @@ import type {
   Key,
   Ref,
   ViewProps,
+  SafeAreaViewProps,
+  ContainerProps,
+  CenterProps,
+  ExpandedProps,
   ColumnProps,
   RowProps,
   ScrollViewProps,
@@ -47,6 +51,8 @@ import type {
   classNameType,
 } from "./types";
 
+/* VNODE CONSTANTS */
+
 export const VNODE_TYPE = Symbol.for("julia.vnode");
 export const Fragment = Symbol.for("julia.fragment");
 
@@ -54,14 +60,14 @@ type ElementInput = VNodeProps & Record<string, unknown>;
 
 let autoClassCounter = 0;
 
+/* VNODE CREATION */
+
 export function createElement<P = Record<string, unknown>>(
   type: VNodeType,
   props: P | null,
   ...children: VNodeChild[]
 ): VNode<P> {
-  const input = {
-    ...((props ?? {}) as object),
-  } as ElementInput;
+  const input = { ...((props ?? {}) as object) } as ElementInput;
 
   const {
     key: rawKey,
@@ -77,11 +83,19 @@ export function createElement<P = Record<string, unknown>>(
       : propsChildren == null
         ? []
         : Array.isArray(propsChildren)
-          ? [...propsChildren]
+          ? ([...propsChildren] as VNodeChild[])
           : [propsChildren as VNodeChild];
 
-  const autoClassName =
-    type === Fragment ? null : `${String(type)}_${++autoClassCounter}`;
+  let resolvedClassName: classNameType | "";
+
+  if (type === Fragment) {
+    resolvedClassName = "";
+  } else if (rawClass != null) {
+    resolvedClassName = rawClass as classNameType;
+  } else {
+    resolvedClassName =
+      `${String(type)}_${++autoClassCounter}` as classNameType;
+  }
 
   return {
     $$typeof: VNODE_TYPE,
@@ -89,7 +103,7 @@ export function createElement<P = Record<string, unknown>>(
     kind: type === Fragment ? "fragment" : "element",
     key: (rawKey as Key | null | undefined) ?? null,
     ref: (rawRef as Ref<unknown> | undefined) ?? null,
-    className: (rawClass as classNameType | "") ?? autoClassName,
+    className: resolvedClassName,
     props: {
       ...rest,
       children: normalizedChildren,
@@ -100,15 +114,30 @@ export function createElement<P = Record<string, unknown>>(
 
 export function _e<P = Record<string, unknown>>(
   type: VNodeType,
-  props: P | null,
+  props: P | null = null,
 ): VNode<P> {
-  return createElement(type, props);
+  return createElement<P>(type, props);
 }
 
-/* Layout */
+/* LAYOUT COMPONENTS */
 
 export function View(props: ViewProps): VNode<ViewProps> {
   return _e("view", props);
+}
+
+export function Container(props: ContainerProps): VNode<ContainerProps> {
+  return _e("container", props);
+}
+
+export function Center(props: CenterProps): VNode<CenterProps> {
+  return _e("center", props);
+}
+
+export function Expanded(props: ExpandedProps): VNode<ExpandedProps> {
+  return _e("expanded", {
+    flex: 1,
+    ...props,
+  });
 }
 
 export function Column(props: ColumnProps): VNode<ColumnProps> {
@@ -120,7 +149,7 @@ export function Row(props: RowProps): VNode<RowProps> {
 }
 
 export function ScrollView(props: ScrollViewProps): VNode<ScrollViewProps> {
-  return _e("scroll-view", props);
+  return _e("scrollview", props);
 }
 
 export function Spacer(props: SpacerProps = {}): VNode<SpacerProps> {
@@ -131,14 +160,16 @@ export function Divider(props: DividerProps = {}): VNode<DividerProps> {
   return _e("divider", props);
 }
 
-/* Text */
+/* TEXT COMPONENTS */
 
 export function Text(
   text: string,
   props: TextProps = { text: "" },
 ): VNode<TextProps> {
-  props.text = text;
-  return _e("text", props);
+  return _e("text", {
+    ...props,
+    text,
+  });
 }
 
 export function Heading(props: HeadingProps): VNode<HeadingProps> {
@@ -157,7 +188,7 @@ export function Link(props: LinkProps): VNode<LinkProps> {
   return _e("link", props);
 }
 
-/* Buttons */
+/* BUTTON COMPONENTS */
 
 export function Button(props: ButtonProps): VNode<ButtonProps> {
   return _e("button", props);
@@ -171,7 +202,7 @@ export function ButtonGroup(props: ButtonGroupProps): VNode<ButtonGroupProps> {
   return _e("button-group", props);
 }
 
-/* Inputs */
+/* INPUT COMPONENTS */
 
 export function Input(props: InputProps): VNode<InputProps> {
   return _e("input", props);
@@ -205,7 +236,7 @@ export function DatePicker(props: DatePickerProps): VNode<DatePickerProps> {
   return _e("date-picker", props);
 }
 
-/* Forms */
+/* FORM COMPONENTS */
 
 export function Form(props: FormProps): VNode<FormProps> {
   return _e("form", props);
@@ -219,7 +250,7 @@ export function FormGroup(props: FormGroupProps): VNode<FormGroupProps> {
   return _e("form-group", props);
 }
 
-/* Data */
+/* DATA COMPONENTS */
 
 export function Table(props: TableProps): VNode<TableProps> {
   return _e("table", props);
@@ -237,7 +268,7 @@ export function TreeView(props: TreeViewProps): VNode<TreeViewProps> {
   return _e("tree-view", props);
 }
 
-/* Media */
+/* MEDIA COMPONENTS */
 
 export function Image(props: ImageProps): VNode<ImageProps> {
   return _e("image", props);
@@ -255,7 +286,7 @@ export function Spinner(props: SpinnerProps = {}): VNode<SpinnerProps> {
   return _e("spinner", props);
 }
 
-/* Window and navigation */
+/* WINDOW AND NAVIGATION */
 
 export function Window(props: WindowProps): VNode<WindowProps> {
   return _e("window", props);
