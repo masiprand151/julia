@@ -8,7 +8,8 @@
     "build-bundle": "esbuild build/main.js --sourcemap --bundle --outfile=dist/main.cjs --platform=node --format=cjs --external:@nodegui/nodegui \"--external:nodegui-plugin-*\"",
     "clean": "rimraf build dist tmp-jam-pack-nodegui",
     "package": "jam-pack-nodegui --config packaging/jam-pack-nodegui.json",
-    "start": "qode dist/main.cjs"
+    "start": "qode dist/main.cjs",
+    "dev": "npm run build && qode dist/main.cjs"
   },
   "license": "MIT",
   "devDependencies": {
