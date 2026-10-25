@@ -1,10 +1,17 @@
-import { QWidget, QLabel, QPushButton, FlexLayout } from "@nodegui/nodegui";
+import {
+  QWidget,
+  QLabel,
+  QPushButton,
+  FlexLayout,
+  QSizePolicyPolicy,
+} from "@nodegui/nodegui";
 
 import type { VNodeChild } from "../types";
 import type { MountedNode, JuliaLayout } from "./types";
 import { state } from "./state";
 import { isVNode, propsOf, normalizeChildren } from "./vnode-utils";
 import { createLayout, attachWidget } from "./layout";
+import { attachEvents } from "./events";
 
 export function createWidget(
   node: VNodeChild,
@@ -42,7 +49,19 @@ export function createWidget(
 
   if (type === "text") {
     const label = new QLabel(parentWidget);
+
     label.setText(String(props.text ?? ""));
+    label.setWordWrap(false);
+    label.setMinimumWidth(0);
+
+    label.setSizePolicy(QSizePolicyPolicy.Minimum, QSizePolicyPolicy.Fixed);
+    //   label.setStyleSheet(`
+    //   QLabel {
+    //     border: 2px solid transparent;
+    //     padding: 2px;
+    //   }
+    // `);
+
     widget = label;
   } else if (type === "button") {
     const button = new QPushButton(parentWidget);
@@ -50,6 +69,7 @@ export function createWidget(
     widget = button;
   } else {
     const container = new QWidget(parentWidget);
+
     widget = container;
 
     if (type === "view") {
@@ -62,6 +82,7 @@ export function createWidget(
   }
 
   attachWidget(widget, node, parentLayout, index);
+  attachEvents(widget, node);
 
   const mounted: MountedNode = {
     vnode: node,

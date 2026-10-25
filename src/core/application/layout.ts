@@ -4,11 +4,18 @@ import type { VNodeChild } from "../types";
 import type { JuliaLayout, Props } from "./types";
 import { isVNode, propsOf } from "./vnode-utils";
 
-export function createLayout(type: string): QBoxLayout {
+export function createLayout(type: string): JuliaLayout {
+  const normalized = type.toLowerCase();
+
+  if (normalized === "view") {
+    const { FlexLayout } =
+      require("@nodegui/nodegui") as typeof import("@nodegui/nodegui");
+
+    return new FlexLayout();
+  }
+
   const direction =
-    type.toLowerCase() === "row"
-      ? Direction.LeftToRight
-      : Direction.TopToBottom;
+    normalized === "row" ? Direction.LeftToRight : Direction.TopToBottom;
 
   return new QBoxLayout(direction);
 }
@@ -44,7 +51,8 @@ export function attachWidget(
 
   if (parentLayout instanceof QBoxLayout) {
     parentLayout.insertWidget(index, widget);
-  } else {
-    parentLayout.addWidget(widget);
+    return;
   }
+
+  parentLayout.addWidget(widget);
 }

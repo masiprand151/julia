@@ -5,7 +5,7 @@ import { diff } from "../reconciler";
 import { state } from "./state";
 import { isVNode, getVNodeAtPath } from "./vnode-utils";
 import { createWidget } from "./widget-factory";
-import { getMounted, removeMounted } from "./mounted-tree";
+import { getMounted, getMountedParent, removeMounted } from "./mounted-tree";
 import { applyProps } from "./props-applier";
 
 export function applyPatches(
@@ -18,7 +18,27 @@ export function applyPatches(
         const mounted = getMounted(patch.path);
         const newNode = getVNodeAtPath(next, patch.path);
 
-        if (mounted && isVNode(newNode)) {
+        if (!mounted || !isVNode(newNode)) break;
+
+        const type = String(newNode.type).toLowerCase();
+
+        if (type === "text" && mounted.widget instanceof QLabel) {
+          const label = mounted.widget;
+          const props = newNode.props as Record<string, unknown>;
+
+          label.setText(String(props.text ?? ""));
+          label.setWordWrap(false);
+
+          mounted.vnode = newNode;
+          label.setMinimumWidth(label.sizeHint().width());
+          label.updateGeometry();
+          label.update();
+
+          if (mounted.parentLayout) {
+            mounted.parentLayout.invalidate();
+            mounted.parentLayout.activate();
+          }
+        } else {
           mounted.vnode = newNode;
           applyProps(mounted, newNode);
         }
@@ -29,10 +49,26 @@ export function applyPatches(
       case "UPDATE_TEXT": {
         const mounted = getMounted(patch.path);
 
-        if (mounted && mounted.widget instanceof QLabel) {
-          mounted.widget.setText(String(patch.value));
-          mounted.vnode = patch.value;
+        if (!mounted || !(mounted.widget instanceof QLabel)) {
+          break;
         }
+
+        const label = mounted.widget;
+
+        label.setText(String(patch.value));
+        label.setWordWrap(false);
+
+        // Hitung ukuran teks terbaru.
+        label.adjustSize();
+        label.updateGeometry();
+
+        // Perbarui layout parent tanpa membuat ulang QLabel.
+        if (mounted.parentLayout) {
+          mounted.parentLayout.invalidate();
+          mounted.parentLayout.activate();
+        }
+
+        label.update();
 
         break;
       }
