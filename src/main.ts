@@ -1,6 +1,4 @@
-import { Application, useState } from "./core/Application";
-import { Button, Text, View, Window } from "./core/component";
-import { compileStyleSheet, parseStyle, StyleSheet } from "./core/style";
+import { Application, Button, Text, useState, View, Window } from "@Julia/core";
 
 function Main() {
   const [message, setMessage] = useState("Julia");
